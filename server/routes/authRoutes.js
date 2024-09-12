@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerUser, loginUser, getUserProfile, updateUserProfile } = require('../controllers/authController');
+const { registerUser, loginUser, getUserProfile, updateUserProfile, forgotPassword} = require('../controllers/authController');
 const authenticateToken = require('../middleware/authMiddleware');  // 引入认证中间件
 
 const router = express.Router();
@@ -15,5 +15,8 @@ router.get('/profile', authenticateToken, getUserProfile);
 
 // 更新用户信息（受保护）
 router.put('/profile', authenticateToken, updateUserProfile);
+
+// 添加忘记密码的路由
+router.post('/forgot-password', forgotPassword); 
 
 module.exports = router;

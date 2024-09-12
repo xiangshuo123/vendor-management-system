@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../db');  // 引入数据库连接
+const nodemailer = require('nodemailer');
 
 // 用户注册逻辑
 const registerUser = async (req, res) => {
@@ -101,4 +102,54 @@ const updateUserProfile = (req, res) => {
     );
 };
 
-module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile };
+
+// 忘记密码
+const forgotPassword = (req, res) => {
+    const { email } = req.body;
+  
+    // 检查用户是否存在
+    db.query('SELECT * FROM users WHERE email = ?', [email], (err, result) => {
+      if (err) {
+        return res.status(500).json({ message: 'Server error' });
+      }
+      if (result.length === 0) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      const user = result[0];
+      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' }); // 生成JWT重置令牌
+  
+      // 设置邮件发送选项
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',  // 使用Gmail服务
+        auth: {
+          user: process.env.EMAIL_USER,  // 你的Gmail地址
+          pass: process.env.EMAIL_PASS,  // 应用程序密码
+        },
+      });
+  
+      const mailOptions = {
+        from: process.env.EMAIL_USER,  // 邮件发送者地址
+        to: email,  // 邮件接收者
+        subject: 'Password Reset',  // 邮件主题
+        text: `Click the link to reset your password: http://localhost:3000/reset-password/${token}`,  // 邮件内容
+      };
+  
+      // 发送邮件
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return res.status(500).json({ message: 'Failed to send email. Please try again later.' });
+        }
+        res.json({ message: 'Password reset link sent to your email.' });
+      });
+    });
+  };
+  
+  // 导出控制器函数
+  module.exports = {
+    registerUser,
+    loginUser,
+    getUserProfile,
+    updateUserProfile,
+    forgotPassword,
+  };
