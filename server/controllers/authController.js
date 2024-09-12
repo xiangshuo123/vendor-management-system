@@ -65,5 +65,40 @@ const loginUser = async (req, res) => {
     }
 };
 
-// 导出控制器函数
-module.exports = { registerUser, loginUser };
+// 获取用户信息
+const getUserProfile = (req, res) => {
+    const userId = req.user.id;  // 从已认证的请求中获取用户ID
+
+    db.query('SELECT id, username, email FROM users WHERE id = ?', [userId], (err, results) => {
+        if (err) return res.status(500).json({ message: 'Database error' });
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json(results[0]);  // 返回用户信息
+    });
+};
+
+// 更新用户信息
+const updateUserProfile = (req, res) => {
+    const userId = req.user.id;  // 从已认证的请求中获取用户ID
+    const { username, email } = req.body;
+
+    // 更新数据库中的用户信息
+    db.query(
+        'UPDATE users SET username = ?, email = ? WHERE id = ?',
+        [username, email, userId],
+        (err, results) => {
+            if (err) return res.status(500).json({ message: 'Database error' });
+
+            if (results.affectedRows === 0) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            res.json({ message: 'User profile updated successfully' });
+        }
+    );
+};
+
+module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile };
