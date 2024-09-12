@@ -144,6 +144,37 @@ const forgotPassword = (req, res) => {
       });
     });
   };
+
+  // 重置密码
+  const resetPassword = (req, res) => {
+    const { token } = req.params; // 从URL参数中获取重置令牌
+    const { newPassword } = req.body;
+  
+    // 验证JWT令牌
+    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+      if (err) {
+        return res.status(400).json({ message: 'Invalid or expired token.' });
+      }
+  
+      const userId = decoded.id;
+  
+      // 加密新密码
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+  
+      // 更新用户密码
+      db.query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, userId], (err, result) => {
+        if (err) {
+          return res.status(500).json({ message: 'Server error' });
+        }
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ message: 'User not found' });
+        }
+        res.json({ message: 'Password reset successfully!' });
+      });
+    });
+  };
+
+
   
   // 导出控制器函数
   module.exports = {
@@ -152,4 +183,5 @@ const forgotPassword = (req, res) => {
     getUserProfile,
     updateUserProfile,
     forgotPassword,
+    resetPassword,
   };
