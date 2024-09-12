@@ -1,20 +1,37 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const db = require('../db');  // 引入数据库连接
 
 // 用户注册逻辑
 const registerUser = async (req, res) => {
-    const { username, password } = req.body;
+    const { username, email, password } = req.body;
     try {
-        // 对密码进行加密
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+        // 检查用户名或邮箱是否已存在
+        db.query('SELECT * FROM users WHERE username = ? OR email = ?', [username, email], async (err, results) => {
+            if (err) return res.status(500).json({ message: 'Database error', error: err });
 
-        // 模拟用户存储
-        const user = { id: 1, username, password: hashedPassword };
+            if (results.length > 0) {
+                return res.status(400).json({ message: 'Username or email already exists' });
+            }
 
-        res.status(201).json({ message: 'User registered successfully', user });
+            // 对密码进行加密
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+
+            // 插入新用户到数据库
+            db.query(
+                'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+                [username, email, hashedPassword],
+                (err, results) => {
+                    if (err) {
+                        return res.status(500).json({ message: 'Database error', error: err });
+                    }
+                    res.status(201).json({ message: 'User registered successfully' });
+                }
+            );
+        });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
@@ -22,20 +39,31 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     const { username, password } = req.body;
     try {
-        // 假设用户存在
-        const user = { id: 1, username, password: '$2b$10$...' }; // 示例
+        // 检查用户是否存在
+        db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
+            if (err) return res.status(500).json({ message: 'Database error' });
 
-        // 检查密码
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+            if (results.length === 0) {
+                return res.status(400).json({ message: 'Invalid credentials' });
+            }
 
-        // 生成JWT
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            const user = results[0];
 
-        res.json({ token });
+            // 检查密码是否匹配
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ message: 'Invalid credentials' });
+            }
+
+            // 生成JWT令牌
+            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+            res.json({ token });
+        });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
+// 导出控制器函数
 module.exports = { registerUser, loginUser };
