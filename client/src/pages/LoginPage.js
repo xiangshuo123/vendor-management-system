@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';  // 使用 useNavigate 钩子进行页面导航
 import './LoginPage.css';  // 引入CSS文件
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';  // 引入 FontAwesome 图标库
 import { faUser, faLock } from '@fortawesome/free-solid-svg-icons';  // 引入用户和锁图标
+import { AuthContext } from '../components/AuthContext'; 
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
-    rememberMe: false,  // 记住密码选项
+    rememberMe: false, 
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();  // 使用 useNavigate 钩子
+  const { login } = useContext(AuthContext);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -35,16 +37,17 @@ const LoginPage = () => {
       });
 
       if (response.data.token) {
-        localStorage.setItem('token', response.data.token); // 存储 JWT 令牌到本地
+        login(formData.username);  // 调用 login 函数更新全局状态
+        localStorage.setItem('token', response.data.token); // 存储 JWT 令牌
         if (formData.rememberMe) {
-          localStorage.setItem('rememberMe', formData.username);  // 如果选择了记住密码，存储用户名
+          localStorage.setItem('rememberMe', formData.username);
         } else {
           localStorage.removeItem('rememberMe');
         }
-        navigate('/dashboard'); // 登录成功后重定向到仪表板页面
+        navigate('/dashboard');
       }
     } catch (error) {
-      setError(error.response?.data?.message || 'Login failed! Please try again.');
+      setError(error.response?.data?.message || '登录失败，请重试。');
     } finally {
       setLoading(false);
     }

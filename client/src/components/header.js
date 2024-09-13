@@ -1,35 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Header.css';
+import { AuthContext } from './AuthContext';  // 引入 AuthContext
 
 const Header = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
-  const [showDropdown, setShowDropdown] = useState(false);
+  const { isLoggedIn, username, logout } = useContext(AuthContext);  // 使用 AuthContext
+  const [showDropdown, setShowDropdown] = React.useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // 模拟从 localStorage 中获取用户信息
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-      setIsLoggedIn(true);
-      setUsername(user.username);
-    }
-  }, []);
-
-  const handleLogout = () => {
-    // 清除用户登录信息
-    localStorage.removeItem('user');
-    setIsLoggedIn(false);
-    navigate('/login');  // 跳转到登录页面
-  };
-
   const handleProfile = () => {
-    navigate('/profile');  // 跳转到账户信息页面
+    navigate('/profile');
   };
 
   const toggleDropdown = () => {
-    setShowDropdown(!showDropdown);  // 切换浮窗显示状态
+    setShowDropdown(!showDropdown);
+  };
+
+  const handleLogout = () => {
+    logout();  // 调用登出函数清除用户状态
+    setShowDropdown(false);  // 关闭浮窗
+    navigate('/login');  // 确保登出后导航到登录页面
   };
 
   return (
