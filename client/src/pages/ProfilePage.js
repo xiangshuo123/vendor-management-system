@@ -50,7 +50,7 @@ const ProfilePage = () => {
     } catch (error) {
       setError('Failed to update profile. Please try again later.');
     } finally {
-      setLoading(false); // 加载结束
+      setLoading(false);
     }
   };
 

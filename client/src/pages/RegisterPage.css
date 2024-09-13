@@ -1,0 +1,69 @@
+.register-container {
+    max-width: 500px;  /* 增加最大宽度 */
+    margin: 40px auto;  /* 增加顶部和底部的外边距 */
+    padding: 30px;  /* 增加内部填充以使表单内容不那么紧凑 */
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);  /* 调整阴影效果 */
+  }
+  
+  .register-container h2 {
+    text-align: center;
+    margin-bottom: 30px;  /* 增加标题下方的外边距 */
+    color: #333;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;  /* 增加表单组之间的距离 */
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;  /* 增加标签与输入框之间的距离 */
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 12px;  /* 增加输入框的内边距 */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 5px;  /* 为输入框与标签之间添加一点距离 */
+  }
+  
+  .register-button {
+    width: 100%;
+    padding: 12px;  /* 增加按钮的内边距 */
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 15px;  /* 增加按钮与上方输入框的距离 */
+  }
+  
+  .register-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .register-button:hover:not(:disabled) {
+    background-color: #45a049;
+  }
+  
+  .error-message {
+    color: red;
+    text-align: center;
+    margin-bottom: 15px;  /* 增加错误信息的下方外边距 */
+  }
+  
+  .success-message {
+    color: green;
+    text-align: center;
+    margin-bottom: 15px;  /* 增加成功信息的下方外边距 */
+  }
+  

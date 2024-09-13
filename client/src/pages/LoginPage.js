@@ -10,6 +10,7 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError('');
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', {
         username,
@@ -17,12 +18,15 @@ const LoginPage = () => {
       });
 
       if (response.data.token) {
-        localStorage.setItem('token', response.data.token); // 存储 JWT 令牌到本地
-        alert('Login successful!');
-        navigate('/dashboard'); // 登录成功后重定向到仪表板页面
+        localStorage.setItem('token', response.data.token);
+        navigate('/dashboard'); 
       }
     } catch (error) {
-      setError(error.response.data.message || 'Login failed!');
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError('Login failed! Please try again.');
+      }
     }
   };
 
