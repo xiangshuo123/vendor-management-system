@@ -1,0 +1,63 @@
+.dashboard-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    text-align: center;
+    background: url('../../public/images/img-9531.webp') no-repeat center center; /* 背景图片 */
+    background-size: cover;  /* 背景图像的大小 */
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .dashboard-container h1 {
+    color: #ffffff; /* 标题颜色 */
+    margin-bottom: 30px;
+    font-size: 24px;
+  }
+  
+  .dashboard-sections {
+    display: flex;
+    justify-content: space-between;  /* Sections 左右分布 */
+    gap: 20px;  /* Sections 之间的间距 */
+  }
+  
+  .dashboard-section {
+    background-color: #ffffff;  /* Section 背景颜色 */
+    border-radius: 10px;
+    padding: 20px;
+    width: 30%;  /* Sections 宽度 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);  /* 添加阴影 */
+    text-align: center;
+  }
+  
+  .section-icon {
+    width: 50px;  /* 图标大小 */
+    margin-bottom: 15px;  /* 图标和标题之间的间距 */
+  }
+  
+  .dashboard-section h2 {
+    font-size: 18px;
+    color: #007BFF;  /* 标题颜色 */
+    margin-bottom: 15px;  /* 标题和列表之间的间距 */
+  }
+  
+  .dashboard-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .dashboard-section li {
+    margin: 10px 0;
+    cursor: pointer;  /* 鼠标指针变化 */
+    color: #333;  /* 列表项颜色 */
+  }
+  
+  .dashboard-section li.clickable-link {
+    color: #007BFF;  /* 可点击链接的颜色 */
+    text-decoration: underline;  /* 加下划线 */
+  }
+  
+  .dashboard-section li:hover {
+    color: #0056b3;  /* 悬停时的颜色 */
+  }
+  
