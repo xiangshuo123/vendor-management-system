@@ -61,7 +61,7 @@ const LoginPage = () => {
           <input
             type="text"
             name="username"
-            placeholder="请输入邮箱"
+            placeholder="请输入用户名"
             value={formData.username}
             onChange={handleChange}
             required

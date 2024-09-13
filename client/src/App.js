@@ -7,10 +7,13 @@ import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
+import Header from './components/header';
+import Footer from './components/footer';
 
 const App = () => {
   return (
     <Router>
+      <Header />
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginPage />} />
@@ -21,6 +24,7 @@ const App = () => {
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
         {/* 其他路由 */}
       </Routes>
+    <Footer />
     </Router>
   );
 };

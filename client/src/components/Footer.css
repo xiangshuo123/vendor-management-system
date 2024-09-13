@@ -1,0 +1,28 @@
+.footer {
+    background-color: #f5f5f5;  /* 背景颜色 */
+    padding: 30px 20px;  /* 内边距 */
+    text-align: center;  /* 居中对齐 */
+    color: #666;  /* 字体颜色 */
+    margin-top: 40px;  /* 顶部外边距 */
+  }
+  
+  .footer-content {
+    max-width: 1200px;  /* 最大宽度 */
+    margin: 0 auto;  /* 居中对齐 */
+  }
+  
+  .footer-sections {
+    display: flex;  /* 使用 flexbox 布局 */
+    justify-content: space-between;  /* 左右分布 */
+    margin-top: 20px;
+  }
+  
+  .footer-sections div {
+    flex: 1;  /* 各部分平分空间 */
+    padding: 0 10px;  /* 内边距 */
+  }
+  
+  .footer-sections p {
+    margin: 5px 0;  /* 间距 */
+  }
+  
