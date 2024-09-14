@@ -5,8 +5,9 @@ const nodemailer = require('nodemailer');
 
 // 用户注册逻辑
 const registerUser = async (req, res) => {
-  const { username, email, password, confirmPassword, phone, role } = req.body;
-  
+  // 使用正确的字段名称
+  const { username, email, password, confirmPassword, phone, role, companyName, accountHolder } = req.body;
+
   console.log("Received registration data:", req.body); // 调试信息
 
   if (password !== confirmPassword) {
@@ -14,24 +15,41 @@ const registerUser = async (req, res) => {
   }
 
   try {
+    // 检查用户是否已存在
     const [userCheck] = await db.promise().query('SELECT * FROM users WHERE username = ? OR email = ?', [username, email]);
     if (userCheck.length > 0) {
       return res.status(400).json({ message: 'Username or email already exists' });
     }
 
+    // 检查公司是否已存在
+    const [companyCheck] = await db.promise().query('SELECT * FROM companies WHERE company_name = ?', [companyName]);
+    if (companyCheck.length > 0) {
+      return res.status(400).json({ message: 'Company name already exists' });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await db.promise().query(
-      'INSERT INTO users (username, email, password, phone, role) VALUES (?, ?, ?, ?, ?)',
-      [username, email, hashedPassword, phone, role]
+    // 插入公司信息
+    const [companyResult] = await db.promise().query(
+      'INSERT INTO companies (company_name, account_holder, account_name) VALUES (?, ?, ?)',
+      [companyName, accountHolder, username]  // 使用正确的字段名称
     );
 
-    res.status(201).json({ message: 'User registered successfully!' });
+    const companyId = companyResult.insertId; // 获取新插入的公司ID
+
+    // 插入用户信息
+    await db.promise().query(
+      'INSERT INTO users (username, email, password, phone, role, company_id, is_main_account) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [username, email, hashedPassword, phone, role, companyId, true]
+    );
+
+    res.status(201).json({ message: 'User and company registered successfully!' });
   } catch (err) {
     console.error('Error in user registration:', err);
     res.status(500).json({ message: 'Server error during registration. Please try again later.' });
   }
 };
+
 
 // 用户登录逻辑
 const loginUser = async (req, res) => {
