@@ -5,35 +5,32 @@ const nodemailer = require('nodemailer');
 
 // 用户注册逻辑
 const registerUser = async (req, res) => {
-    const { username, email, password } = req.body;
-    try {
-        // 检查用户名或邮箱是否已存在
-        db.query('SELECT * FROM users WHERE username = ? OR email = ?', [username, email], async (err, results) => {
-            if (err) return res.status(500).json({ message: 'Database error', error: err });
+  const { username, email, password, confirmPassword, phone, role } = req.body;
+  
+  console.log("Received registration data:", req.body); // 调试信息
 
-            if (results.length > 0) {
-                return res.status(400).json({ message: 'Username or email already exists' });
-            }
+  if (password !== confirmPassword) {
+    return res.status(400).json({ message: 'Passwords do not match' });
+  }
 
-            // 对密码进行加密
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password, salt);
-
-            // 插入新用户到数据库
-            db.query(
-                'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-                [username, email, hashedPassword],
-                (err, results) => {
-                    if (err) {
-                        return res.status(500).json({ message: 'Database error', error: err });
-                    }
-                    res.status(201).json({ message: 'User registered successfully' });
-                }
-            );
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+  try {
+    const [userCheck] = await db.promise().query('SELECT * FROM users WHERE username = ? OR email = ?', [username, email]);
+    if (userCheck.length > 0) {
+      return res.status(400).json({ message: 'Username or email already exists' });
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await db.promise().query(
+      'INSERT INTO users (username, email, password, phone, role) VALUES (?, ?, ?, ?, ?)',
+      [username, email, hashedPassword, phone, role]
+    );
+
+    res.status(201).json({ message: 'User registered successfully!' });
+  } catch (err) {
+    console.error('Error in user registration:', err);
+    res.status(500).json({ message: 'Server error during registration. Please try again later.' });
+  }
 };
 
 // 用户登录逻辑
