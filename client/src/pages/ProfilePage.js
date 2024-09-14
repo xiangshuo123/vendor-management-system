@@ -1,28 +1,32 @@
+// ProfilePage.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Sidebar from './Sidebar'; // 引入 Sidebar 组件
+import './ProfilePage.css'; // 引入 ProfilePage 的 CSS 样式
 
 const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState({ username: '', email: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [loading, setLoading] = useState(false); // 新增加载状态
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState('profile'); // 当前页面状态
 
   // 获取用户信息
   useEffect(() => {
     const fetchUserInfo = async () => {
-      setLoading(true); // 开始加载
+      setLoading(true);
       try {
-        const token = localStorage.getItem('token'); // 从localStorage获取JWT令牌
+        const token = localStorage.getItem('token');
         const response = await axios.get('http://localhost:5000/api/auth/profile', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUserInfo(response.data); // 设置用户信息
+        setUserInfo(response.data);
       } catch (error) {
         setError('Failed to fetch user information. Please try again later.');
       } finally {
-        setLoading(false); // 加载结束
+        setLoading(false);
       }
     };
 
@@ -32,9 +36,9 @@ const ProfilePage = () => {
   // 更新用户信息
   const handleUpdate = async (e) => {
     e.preventDefault();
-    setLoading(true); // 开始加载
-    setError(''); // 清空错误消息
-    setSuccess(''); // 清空成功消息
+    setLoading(true);
+    setError('');
+    setSuccess('');
     try {
       const token = localStorage.getItem('token');
       await axios.put(
@@ -55,32 +59,35 @@ const ProfilePage = () => {
   };
 
   return (
-    <div>
-      <h1>Profile Page</h1>
-      {loading && <p>Loading...</p>} {/* 显示加载状态 */}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
-      <form onSubmit={handleUpdate}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            value={userInfo.username}
-            onChange={(e) => setUserInfo({ ...userInfo, username: e.target.value })}
-            required
-          />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={userInfo.email}
-            onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
-            required
-          />
-        </div>
-        <button type="submit" disabled={loading}>Update Profile</button> {/* 在加载时禁用按钮 */}
-      </form>
+    <div className="profile-container">
+      <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} /> {/* 添加 Sidebar */}
+      <div className="profile-content"> {/* 新增内容容器 */}
+        <h1>账户信息</h1>
+        {loading && <p>Loading...</p>}
+        {error && <p className="error">{error}</p>}
+        {success && <p className="success">{success}</p>}
+        <form onSubmit={handleUpdate} className="profile-form">
+          <div className="form-group">
+            <label>用户名:</label>
+            <input
+              type="text"
+              value={userInfo.username}
+              onChange={(e) => setUserInfo({ ...userInfo, username: e.target.value })}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>邮箱:</label>
+            <input
+              type="email"
+              value={userInfo.email}
+              onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
+              required
+            />
+          </div>
+          <button type="submit" disabled={loading}>更新信息</button>
+        </form>
+      </div>
     </div>
   );
 };
