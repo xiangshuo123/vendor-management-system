@@ -9,7 +9,11 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import Header from './components/header';
 import Footer from './components/footer';
-import { AuthProvider } from '../src/components/AuthContext'; 
+import { AuthProvider } from '../src/components/AuthContext';
+import AccountLayout from './components/AccountLayout';
+import PermissionPage from './pages/PermissionPage';
+import QualificationsPage from './pages/QualificationsPage';
+import SupplierInfoPage from './pages/SupplierInfoPage';
 
 const App = () => {
   return (
@@ -21,10 +25,15 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route element={<ProtectedRoute><AccountLayout /></ProtectedRoute>}>
+            {/* Routes within the Account Layout */}
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/permissions" element={<PermissionPage />} />
+            <Route path="/supplier-info" element={<SupplierInfoPage />} />
+            <Route path="/certificates" element={<QualificationsPage />} />
+          </Route>
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-          {/* 其他路由 */}
         </Routes>
         <Footer />
       </Router>

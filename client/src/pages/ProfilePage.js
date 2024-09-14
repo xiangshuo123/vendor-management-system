@@ -1,15 +1,13 @@
 // ProfilePage.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Sidebar from './Sidebar'; // 引入 Sidebar 组件
-import './ProfilePage.css'; // 引入 ProfilePage 的 CSS 样式
+import './ProfilePage.css';
 
 const ProfilePage = () => {
   const [userInfo, setUserInfo] = useState({ username: '', email: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState('profile'); // 当前页面状态
 
   // 获取用户信息
   useEffect(() => {
@@ -59,35 +57,32 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="profile-container">
-      <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} /> {/* 添加 Sidebar */}
-      <div className="profile-content"> {/* 新增内容容器 */}
-        <h1>账户信息</h1>
-        {loading && <p>Loading...</p>}
-        {error && <p className="error">{error}</p>}
-        {success && <p className="success">{success}</p>}
-        <form onSubmit={handleUpdate} className="profile-form">
-          <div className="form-group">
-            <label>用户名:</label>
-            <input
-              type="text"
-              value={userInfo.username}
-              onChange={(e) => setUserInfo({ ...userInfo, username: e.target.value })}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>邮箱:</label>
-            <input
-              type="email"
-              value={userInfo.email}
-              onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
-              required
-            />
-          </div>
-          <button type="submit" disabled={loading}>更新信息</button>
-        </form>
-      </div>
+    <div className="profile-content">
+      <h1>账户信息</h1>
+      {loading && <p>Loading...</p>}
+      {error && <p className="error">{error}</p>}
+      {success && <p className="success">{success}</p>}
+      <form onSubmit={handleUpdate} className="profile-form">
+        <div className="form-group">
+          <label>用户名:</label>
+          <input
+            type="text"
+            value={userInfo.username}
+            onChange={(e) => setUserInfo({ ...userInfo, username: e.target.value })}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>邮箱:</label>
+          <input
+            type="email"
+            value={userInfo.email}
+            onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
+            required
+          />
+        </div>
+        <button type="submit" disabled={loading}>更新信息</button>
+      </form>
     </div>
   );
 };
