@@ -21,19 +21,23 @@ const App = () => {
       <Router>
         <Header />
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+
+          {/* Protected Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+
+          {/* Nested Protected Routes within Account Layout */}
           <Route element={<ProtectedRoute><AccountLayout /></ProtectedRoute>}>
-            {/* Routes within the Account Layout */}
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/permissions" element={<PermissionPage />} />
             <Route path="/supplier-info" element={<SupplierInfoPage />} />
             <Route path="/certificates" element={<QualificationsPage />} />
           </Route>
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
         </Routes>
         <Footer />
       </Router>
