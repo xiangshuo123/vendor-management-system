@@ -9,22 +9,22 @@ const Sidebar = () => {
       <h3>账户设置</h3>
       <ul>
         <li>
-          <NavLink to="/profile" activeClassName="active">
+          <NavLink to="/profile" activeclassname="active">
             <i className="fas fa-user"></i> 账户信息
           </NavLink>
         </li>
         <li>
-          <NavLink to="/permissions" activeClassName="active">
+          <NavLink to="/permissions" activeclassname="active">
             <i className="fas fa-toggle-on"></i> 账号权限
           </NavLink>
         </li>
         <li>
-          <NavLink to="/supplier-info" activeClassName="active">
+          <NavLink to="/supplier-info" activeclassname="active">
             <i className="fas fa-address-book"></i> 供应商信息
           </NavLink>
         </li>
         <li>
-          <NavLink to="/certificates" activeClassName="active">
+          <NavLink to="/certificates" activeclassname="active">
             <i className="fas fa-file-alt"></i> 资质证照
           </NavLink>
         </li>

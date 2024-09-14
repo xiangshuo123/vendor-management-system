@@ -3,16 +3,9 @@ const jwt = require('jsonwebtoken');
 const db = require('../db');  // 引入数据库连接
 const nodemailer = require('nodemailer');
 
-// 用户注册逻辑
+// 注册用户
 const registerUser = async (req, res) => {
-  // 使用正确的字段名称
-  const { username, email, password, confirmPassword, phone, role, companyName, accountHolder } = req.body;
-
-  console.log("Received registration data:", req.body); // 调试信息
-
-  if (password !== confirmPassword) {
-    return res.status(400).json({ message: 'Passwords do not match' });
-  }
+  const { username, email, password, phone, role, company_name, account_holder } = req.body;
 
   try {
     // 检查用户是否已存在
@@ -22,25 +15,26 @@ const registerUser = async (req, res) => {
     }
 
     // 检查公司是否已存在
-    const [companyCheck] = await db.promise().query('SELECT * FROM companies WHERE company_name = ?', [companyName]);
+    const [companyCheck] = await db.promise().query('SELECT * FROM companies WHERE company_name = ?', [company_name]);
+    let companyId;
+
     if (companyCheck.length > 0) {
-      return res.status(400).json({ message: 'Company name already exists' });
+      companyId = companyCheck[0].id; // 使用已存在的公司ID
+    } else {
+      // 插入公司信息
+      const [companyResult] = await db.promise().query(
+        'INSERT INTO companies (company_name, account_holder) VALUES (?, ?)',
+        [company_name, account_holder]
+      );
+      companyId = companyResult.insertId; // 获取新插入的公司ID
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 插入公司信息
-    const [companyResult] = await db.promise().query(
-      'INSERT INTO companies (company_name, account_holder, account_name) VALUES (?, ?, ?)',
-      [companyName, accountHolder, username]  // 使用正确的字段名称
-    );
-
-    const companyId = companyResult.insertId; // 获取新插入的公司ID
-
     // 插入用户信息
     await db.promise().query(
-      'INSERT INTO users (username, email, password, phone, role, company_id, is_main_account) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [username, email, hashedPassword, phone, role, companyId, true]
+      'INSERT INTO users (username, email, password, phone, role, company_id) VALUES (?, ?, ?, ?, ?, ?)',
+      [username, email, hashedPassword, phone, role, companyId]
     );
 
     res.status(201).json({ message: 'User and company registered successfully!' });
@@ -50,71 +44,96 @@ const registerUser = async (req, res) => {
   }
 };
 
-
 // 用户登录逻辑
 const loginUser = async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        // 检查用户是否存在
-        db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
-            if (err) return res.status(500).json({ message: 'Database error' });
+  const { username, password } = req.body;
+  try {
+      // 检查用户是否存在
+      db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
+          if (err) return res.status(500).json({ message: 'Database error' });
 
-            if (results.length === 0) {
-                return res.status(400).json({ message: 'Invalid credentials' });
-            }
+          if (results.length === 0) {
+              return res.status(400).json({ message: 'Invalid credentials' });
+          }
 
-            const user = results[0];
+          const user = results[0];
 
-            // 检查密码是否匹配
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) {
-                return res.status(400).json({ message: 'Invalid credentials' });
-            }
+          // 检查密码是否匹配
+          const isMatch = await bcrypt.compare(password, user.password);
+          if (!isMatch) {
+              return res.status(400).json({ message: 'Invalid credentials' });
+          }
 
-            // 生成JWT令牌
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+          // 生成JWT令牌
+          const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-            res.json({ token });
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
+          res.json({ token });
+      });
+  } catch (error) {
+      res.status(500).json({ message: 'Server error', error: error.message });
+  }
 };
 
-// 获取用户信息
-const getUserProfile = (req, res) => {
-    const userId = req.user.id;  // 从已认证的请求中获取用户ID
 
-    db.query('SELECT id, username, email FROM users WHERE id = ?', [userId], (err, results) => {
-        if (err) return res.status(500).json({ message: 'Database error' });
+/// 获取用户信息
+const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
 
-        if (results.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
-        }
+    const [users] = await db.promise().query(
+      'SELECT u.id, u.username, u.email, u.phone, u.role, u.created_at AS registration_date, c.company_name, c.account_holder FROM users u LEFT JOIN companies c ON u.company_id = c.id WHERE u.id = ?',
+      [userId]
+    );
 
-        res.json(results[0]);  // 返回用户信息
-    });
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(users[0]);
+  } catch (err) {
+    console.error('Error fetching user profile:', err);
+    res.status(500).json({ message: 'Server error while fetching user profile. Please try again later.' });
+  }
 };
 
 // 更新用户信息
-const updateUserProfile = (req, res) => {
-    const userId = req.user.id;  // 从已认证的请求中获取用户ID
-    const { username, email } = req.body;
+const updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { username, email, phone, account_holder, password, role } = req.body;
 
-    // 更新数据库中的用户信息
-    db.query(
-        'UPDATE users SET username = ?, email = ? WHERE id = ?',
-        [username, email, userId],
-        (err, results) => {
-            if (err) return res.status(500).json({ message: 'Database error' });
+    if (username) {
+      await db.promise().query('UPDATE users SET username = ? WHERE id = ?', [username, userId]);
+    }
 
-            if (results.affectedRows === 0) {
-                return res.status(404).json({ message: 'User not found' });
-            }
+    if (email) {
+      await db.promise().query('UPDATE users SET email = ? WHERE id = ?', [email, userId]);
+    }
 
-            res.json({ message: 'User profile updated successfully' });
-        }
-    );
+    if (phone) {
+      await db.promise().query('UPDATE users SET phone = ? WHERE id = ?', [phone, userId]);
+    }
+
+    if (account_holder) {
+      const [user] = await db.promise().query('SELECT company_id FROM users WHERE id = ?', [userId]);
+      const companyId = user[0].company_id;
+      await db.promise().query('UPDATE companies SET account_holder = ? WHERE id = ?', [account_holder, companyId]);
+    }
+
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await db.promise().query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, userId]);
+    }
+
+    if (role) {
+      await db.promise().query('UPDATE users SET role = ? WHERE id = ?', [role, userId]);
+    }
+
+    res.json({ message: 'Profile updated successfully!' });
+  } catch (err) {
+    console.error('Error updating user profile:', err);
+    res.status(500).json({ message: 'Server error while updating profile. Please try again later.' });
+  }
 };
 
 
