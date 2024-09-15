@@ -17,6 +17,9 @@ const QualificationPage = () => {
     },
   });
 
+  // 获取认证令牌
+  const token = localStorage.getItem('token'); // 确保登录后将令牌存储在 localStorage
+
   const onDrop = (acceptedFiles, fieldName) => {
     setQualificationData((prevData) => ({
       ...prevData,
@@ -24,29 +27,96 @@ const QualificationPage = () => {
     }));
   };
 
-  const { getRootProps: getBusinessLicenseProps, getInputProps: getBusinessLicenseInputProps } = useDropzone({
+  const {
+    getRootProps: getBusinessLicenseProps,
+    getInputProps: getBusinessLicenseInputProps,
+  } = useDropzone({
     onDrop: (acceptedFiles) => onDrop(acceptedFiles, 'businessLicense'),
     multiple: false,
   });
 
-  const { getRootProps: getSafetyCertificateProps, getInputProps: getSafetyCertificateInputProps } = useDropzone({
+  const {
+    getRootProps: getSafetyCertificateProps,
+    getInputProps: getSafetyCertificateInputProps,
+  } = useDropzone({
     onDrop: (acceptedFiles) => onDrop(acceptedFiles, 'safetyCertificate'),
     multiple: false,
   });
 
-  const { getRootProps: getHazardousCertificateProps, getInputProps: getHazardousCertificateInputProps } = useDropzone({
+  const {
+    getRootProps: getHazardousCertificateProps,
+    getInputProps: getHazardousCertificateInputProps,
+  } = useDropzone({
     onDrop: (acceptedFiles) => onDrop(acceptedFiles, 'hazardousCertificate'),
     multiple: false,
   });
 
-  const { getRootProps: getOtherProps, getInputProps: getOtherInputProps } = useDropzone({
+  const {
+    getRootProps: getOtherProps,
+    getInputProps: getOtherInputProps,
+  } = useDropzone({
     onDrop: (acceptedFiles) => onDrop(acceptedFiles, 'other'),
     multiple: false,
   });
 
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log('保存资格证照信息:', qualificationData);
-    // Here, you would typically send this data to the backend API
+
+    try {
+      const formData = new FormData();
+      formData.append('qualification_type', qualificationData.qualificationType);
+      formData.append('company_establishment_date', qualificationData.companyEstablishmentDate);
+      formData.append('registered_capital', qualificationData.registeredCapital);
+      formData.append('total_employees', qualificationData.totalEmployees);
+      formData.append('company_area', qualificationData.companyArea);
+
+      // 添加文件到 formData
+      if (qualificationData.documents.businessLicense) {
+        formData.append('business_license', qualificationData.documents.businessLicense);
+      }
+      if (qualificationData.documents.safetyCertificate) {
+        formData.append('production_safety_certificate', qualificationData.documents.safetyCertificate);
+      }
+      if (qualificationData.documents.hazardousCertificate) {
+        formData.append('hazardous_production_license', qualificationData.documents.hazardousCertificate);
+      }
+      if (qualificationData.documents.other) {
+        formData.append('other_documents', qualificationData.documents.other);
+      }
+
+      const response = await fetch('http://localhost:5000/api/qualifications', {
+        method: 'POST',
+        headers: {
+          // 不要设置 'Content-Type'，浏览器会自动设置
+          Authorization: `Bearer ${token}`, // 添加认证令牌
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          // 处理非 JSON 格式的错误响应，例如 HTML 错误页面
+          const text = await response.text();
+          console.error('Error response from server (non-JSON):', text);
+          throw new Error(
+            `Failed to save qualification info: ${response.statusText || 'Unknown error'}`
+          );
+        }
+        console.error('Error response from server:', errorData);
+        throw new Error(errorData.message || 'Unknown error');
+      }
+      
+
+      const result = await response.json();
+      console.log('Qualification saved successfully:', result);
+      alert('资质信息保存成功！');
+    } catch (error) {
+      console.error('Error saving qualification info:', error);
+      alert(`Error saving qualification info: ${error.message}`);
+    }
   };
 
   return (
