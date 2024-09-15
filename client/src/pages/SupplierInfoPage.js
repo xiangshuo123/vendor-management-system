@@ -6,6 +6,7 @@ const SupplierInfoPage = () => {
   const [supplierInfo, setSupplierInfo] = useState({
     company_name: '',
     business_nature: '',
+    contact_name: '',
     contacts: [],
     contact_phone: '',
     mobile_phone: '',
@@ -38,7 +39,7 @@ const SupplierInfoPage = () => {
     ],
     USA: [
       { value: 'California', label: 'California' },
-      { value: 'New York', label: 'New York' },
+      { value: 'NewYork', label: 'New York' },
     ],
   };
 
@@ -52,11 +53,11 @@ const SupplierInfoPage = () => {
       { value: 'Haidian', label: 'Haidian' },
     ],
     California: [
-      { value: 'Los Angeles', label: 'Los Angeles' },
-      { value: 'San Francisco', label: 'San Francisco' },
+      { value: 'LosAngeles', label: 'Los Angeles' },
+      { value: 'SanFrancisco', label: 'San Francisco' },
     ],
     NewYork: [
-      { value: 'New York City', label: 'New York City' },
+      { value: 'NewYorkCity', label: 'New York City' },
       { value: 'Buffalo', label: 'Buffalo' },
     ],
   };
@@ -67,15 +68,27 @@ const SupplierInfoPage = () => {
   };
 
   const handleCountryChange = (selectedOption) => {
-    setSupplierInfo((prevState) => ({ ...prevState, country: selectedOption.value, state: '', city: '' }));
+    setSupplierInfo((prevState) => ({
+      ...prevState,
+      country: selectedOption.value,
+      state: '',
+      city: '',
+    }));
   };
 
   const handleStateChange = (selectedOption) => {
-    setSupplierInfo((prevState) => ({ ...prevState, state: selectedOption.value, city: '' }));
+    setSupplierInfo((prevState) => ({
+      ...prevState,
+      state: selectedOption.value,
+      city: '',
+    }));
   };
 
   const handleCityChange = (selectedOption) => {
-    setSupplierInfo((prevState) => ({ ...prevState, city: selectedOption.value }));
+    setSupplierInfo((prevState) => ({
+      ...prevState,
+      city: selectedOption.value,
+    }));
   };
 
   const handleAddContact = () => {
@@ -86,7 +99,33 @@ const SupplierInfoPage = () => {
   };
 
   const handleSave = async () => {
-    alert('供应商信息保存成功！');
+    try {
+      console.log('Supplier Info to save:', supplierInfo); // 打印发送的数据以调试
+
+      const response = await fetch('http://localhost:5000/api/suppliers/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(supplierInfo),
+      });
+
+      // 检查响应的状态码和数据
+      if (!response.ok) {
+        const errorData = await response.json(); // 获取错误信息
+        console.error('Error response from server:', errorData);
+        throw new Error(
+          `Failed to save supplier info: ${errorData.message || 'Unknown error'}`
+        );
+      }
+
+      const result = await response.json();
+      console.log('Supplier saved successfully:', result);
+      alert('供应商信息保存成功！');
+    } catch (error) {
+      console.error('Error saving supplier info:', error); // 打印错误信息
+      alert(`Error saving supplier info: ${error.message}`);
+    }
   };
 
   return (
@@ -117,6 +156,33 @@ const SupplierInfoPage = () => {
           />
         </div>
         <div className="form-row">
+          <label>负责人姓名：</label>
+          <input
+            type="text"
+            name="contact_name"
+            value={supplierInfo.contact_name}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="form-row">
+          <label>联系电话：</label>
+          <input
+            type="text"
+            name="contact_phone"
+            value={supplierInfo.contact_phone}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="form-row">
+          <label>手机：</label>
+          <input
+            type="text"
+            name="mobile_phone"
+            value={supplierInfo.mobile_phone}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="form-row">
           <label>国家：</label>
           <Select
             options={countries}
@@ -131,7 +197,9 @@ const SupplierInfoPage = () => {
             options={supplierInfo.country ? states[supplierInfo.country] : []}
             onChange={handleStateChange}
             placeholder="选择省"
-            value={states[supplierInfo.country]?.find((s) => s.value === supplierInfo.state)}
+            value={states[supplierInfo.country]?.find(
+              (s) => s.value === supplierInfo.state
+            )}
           />
         </div>
         <div className="form-row">
@@ -140,7 +208,9 @@ const SupplierInfoPage = () => {
             options={supplierInfo.state ? cities[supplierInfo.state] : []}
             onChange={handleCityChange}
             placeholder="选择市"
-            value={cities[supplierInfo.state]?.find((c) => c.value === supplierInfo.city)}
+            value={cities[supplierInfo.state]?.find(
+              (c) => c.value === supplierInfo.city
+            )}
           />
         </div>
         <div className="form-row">
@@ -234,8 +304,54 @@ const SupplierInfoPage = () => {
         </div>
       </div>
 
-      <button onClick={handleSave} className="save-button">保存</button>
-      <p className="last-updated">最后更新：2021/5/3</p>
+      {/* 联系人信息部分 */}
+      <div className="section">
+        <h2 className="section-title">联系人信息</h2>
+        {supplierInfo.contacts.map((contact, index) => (
+          <div key={index} className="contact-row">
+            <div className="form-row">
+              <label>联系人姓名：</label>
+              <input
+                type="text"
+                value={contact.name}
+                onChange={(e) => {
+                  const newContacts = [...supplierInfo.contacts];
+                  newContacts[index].name = e.target.value;
+                  setSupplierInfo((prevState) => ({
+                    ...prevState,
+                    contacts: newContacts,
+                  }));
+                }}
+              />
+            </div>
+            <div className="form-row">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={contact.isDefault}
+                  onChange={() => {
+                    const newContacts = supplierInfo.contacts.map((c, i) => ({
+                      ...c,
+                      isDefault: i === index,
+                    }));
+                    setSupplierInfo((prevState) => ({
+                      ...prevState,
+                      contacts: newContacts,
+                    }));
+                  }}
+                />
+                默认联系人
+              </label>
+            </div>
+          </div>
+        ))}
+        <button onClick={handleAddContact}>添加联系人</button>
+      </div>
+
+      <button onClick={handleSave} className="save-button">
+        保存
+      </button>
+      <p className="last-updated">最后更新：{lastUpdated || 'N/A'}</p>
     </div>
   );
 };
