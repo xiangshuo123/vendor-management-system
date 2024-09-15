@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import './QualificationPage.css';
 
@@ -20,10 +20,81 @@ const QualificationPage = () => {
   // 获取认证令牌
   const token = localStorage.getItem('token'); // 确保登录后将令牌存储在 localStorage
 
+  // 添加 useEffect，在组件加载时获取资质信息
+  useEffect(() => {
+    const fetchQualificationInfo = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/qualifications', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          console.error('Failed to fetch qualification info');
+          return;
+        }
+
+        const data = await response.json();
+        if (data) {
+          // 将获取到的数据填充到状态中
+          setQualificationData({
+            qualificationType: data.qualification_type || '',
+            companyEstablishmentDate: data.company_establishment_date
+              ? data.company_establishment_date.split('T')[0] // 处理日期格式
+              : '',
+            registeredCapital: data.registered_capital || '',
+            totalEmployees: data.total_employees || '',
+            companyArea: data.company_area || '',
+            documents: {
+              businessLicense: null,
+              safetyCertificate: null,
+              hazardousCertificate: null,
+              other: null,
+            },
+          });
+
+          // 处理已上传的文件
+          const files = data.files || {};
+          const documents = {};
+
+          if (files.business_license && files.business_license.length > 0) {
+            documents.businessLicense = files.business_license[0];
+          }
+          if (files.production_safety_certificate && files.production_safety_certificate.length > 0) {
+            documents.safetyCertificate = files.production_safety_certificate[0];
+          }
+          if (files.hazardous_production_license && files.hazardous_production_license.length > 0) {
+            documents.hazardousCertificate = files.hazardous_production_license[0];
+          }
+          if (files.other_documents && files.other_documents.length > 0) {
+            documents.other = files.other_documents[0];
+          }
+
+          setQualificationData((prevData) => ({
+            ...prevData,
+            documents: {
+              ...prevData.documents,
+              ...documents,
+            },
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching qualification info:', error);
+      }
+    };
+
+    fetchQualificationInfo();
+  }, [token]);
+
   const onDrop = (acceptedFiles, fieldName) => {
     setQualificationData((prevData) => ({
       ...prevData,
-      documents: { ...prevData.documents, [fieldName]: acceptedFiles[0] },
+      documents: {
+        ...prevData.documents,
+        [fieldName]: acceptedFiles.length > 0 ? acceptedFiles[0] : null,
+      },
     }));
   };
 
@@ -71,44 +142,46 @@ const QualificationPage = () => {
       formData.append('company_area', qualificationData.companyArea);
 
       // 添加文件到 formData
-      if (qualificationData.documents.businessLicense) {
+      if (
+        qualificationData.documents.businessLicense &&
+        qualificationData.documents.businessLicense instanceof File
+      ) {
         formData.append('business_license', qualificationData.documents.businessLicense);
       }
-      if (qualificationData.documents.safetyCertificate) {
+      if (
+        qualificationData.documents.safetyCertificate &&
+        qualificationData.documents.safetyCertificate instanceof File
+      ) {
         formData.append('production_safety_certificate', qualificationData.documents.safetyCertificate);
       }
-      if (qualificationData.documents.hazardousCertificate) {
+      if (
+        qualificationData.documents.hazardousCertificate &&
+        qualificationData.documents.hazardousCertificate instanceof File
+      ) {
         formData.append('hazardous_production_license', qualificationData.documents.hazardousCertificate);
       }
-      if (qualificationData.documents.other) {
+      if (
+        qualificationData.documents.other &&
+        qualificationData.documents.other instanceof File
+      ) {
         formData.append('other_documents', qualificationData.documents.other);
       }
 
       const response = await fetch('http://localhost:5000/api/qualifications', {
         method: 'POST',
         headers: {
-          // 不要设置 'Content-Type'，浏览器会自动设置
           Authorization: `Bearer ${token}`, // 添加认证令牌
         },
         body: formData,
       });
 
       if (!response.ok) {
-        let errorData;
-        try {
-          errorData = await response.json();
-        } catch (e) {
-          // 处理非 JSON 格式的错误响应，例如 HTML 错误页面
-          const text = await response.text();
-          console.error('Error response from server (non-JSON):', text);
-          throw new Error(
-            `Failed to save qualification info: ${response.statusText || 'Unknown error'}`
-          );
-        }
-        console.error('Error response from server:', errorData);
-        throw new Error(errorData.message || 'Unknown error');
+        const errorText = await response.text();
+        console.error('Error response from server:', errorText);
+        throw new Error(
+          `Failed to save qualification info: ${response.statusText || 'Unknown error'}`
+        );
       }
-      
 
       const result = await response.json();
       console.log('Qualification saved successfully:', result);
@@ -184,7 +257,7 @@ const QualificationPage = () => {
           />
         </div>
 
-        {/* 文件上传区 */}
+        {/* 文件上传区 - 经营许可证 */}
         <div className="file-upload-section">
           <h4>经营许可证</h4>
           <div {...getBusinessLicenseProps({ className: 'dropzone' })}>
@@ -193,12 +266,28 @@ const QualificationPage = () => {
           </div>
           {qualificationData.documents.businessLicense && (
             <div className="file-preview">
-              <span>{qualificationData.documents.businessLicense.name}</span>
-              <button type="button" onClick={() => onDrop([], 'businessLicense')}>删除</button>
+              <span>
+                {qualificationData.documents.businessLicense.name ||
+                  qualificationData.documents.businessLicense.file_name}
+              </span>
+              <button type="button" onClick={() => onDrop([], 'businessLicense')}>
+                删除
+              </button>
+              {/* 如果是已上传的文件，提供下载链接 */}
+              {qualificationData.documents.businessLicense.file_path && (
+                <a
+                  href={`http://localhost:5000/${qualificationData.documents.businessLicense.file_path}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  查看文件
+                </a>
+              )}
             </div>
           )}
         </div>
 
+        {/* 文件上传区 - 安全生产许可证 */}
         <div className="file-upload-section">
           <h4>安全生产许可证</h4>
           <div {...getSafetyCertificateProps({ className: 'dropzone' })}>
@@ -207,12 +296,27 @@ const QualificationPage = () => {
           </div>
           {qualificationData.documents.safetyCertificate && (
             <div className="file-preview">
-              <span>{qualificationData.documents.safetyCertificate.name}</span>
-              <button type="button" onClick={() => onDrop([], 'safetyCertificate')}>删除</button>
+              <span>
+                {qualificationData.documents.safetyCertificate.name ||
+                  qualificationData.documents.safetyCertificate.file_name}
+              </span>
+              <button type="button" onClick={() => onDrop([], 'safetyCertificate')}>
+                删除
+              </button>
+              {qualificationData.documents.safetyCertificate.file_path && (
+                <a
+                  href={`http://localhost:5000/${qualificationData.documents.safetyCertificate.file_path}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  查看文件
+                </a>
+              )}
             </div>
           )}
         </div>
 
+        {/* 文件上传区 - 危险品生产或经营许可证 */}
         <div className="file-upload-section">
           <h4>危险品生产或经营许可证</h4>
           <div {...getHazardousCertificateProps({ className: 'dropzone' })}>
@@ -221,12 +325,27 @@ const QualificationPage = () => {
           </div>
           {qualificationData.documents.hazardousCertificate && (
             <div className="file-preview">
-              <span>{qualificationData.documents.hazardousCertificate.name}</span>
-              <button type="button" onClick={() => onDrop([], 'hazardousCertificate')}>删除</button>
+              <span>
+                {qualificationData.documents.hazardousCertificate.name ||
+                  qualificationData.documents.hazardousCertificate.file_name}
+              </span>
+              <button type="button" onClick={() => onDrop([], 'hazardousCertificate')}>
+                删除
+              </button>
+              {qualificationData.documents.hazardousCertificate.file_path && (
+                <a
+                  href={`http://localhost:5000/${qualificationData.documents.hazardousCertificate.file_path}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  查看文件
+                </a>
+              )}
             </div>
           )}
         </div>
 
+        {/* 文件上传区 - 其他 */}
         <div className="file-upload-section">
           <h4>其他</h4>
           <div {...getOtherProps({ className: 'dropzone' })}>
@@ -235,8 +354,22 @@ const QualificationPage = () => {
           </div>
           {qualificationData.documents.other && (
             <div className="file-preview">
-              <span>{qualificationData.documents.other.name}</span>
-              <button type="button" onClick={() => onDrop([], 'other')}>删除</button>
+              <span>
+                {qualificationData.documents.other.name ||
+                  qualificationData.documents.other.file_name}
+              </span>
+              <button type="button" onClick={() => onDrop([], 'other')}>
+                删除
+              </button>
+              {qualificationData.documents.other.file_path && (
+                <a
+                  href={`http://localhost:5000/${qualificationData.documents.other.file_path}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  查看文件
+                </a>
+              )}
             </div>
           )}
         </div>
