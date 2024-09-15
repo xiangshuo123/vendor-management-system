@@ -28,12 +28,13 @@
   
   .form-group input {
     width: 100%;
-    padding: 12px 40px;  /* 调整内边距以留出图标空间 */
-    border: 1px solid #ddd;  /* 边框颜色调整 */
-    border-radius: 20px;  /* 圆角边框 */
+    padding: 12px 40px 12px 50px; /* 将左内边距调整为 50px */
+    border: 1px solid #ddd;
+    border-radius: 20px;
     font-size: 16px;
-    box-sizing: border-box;  /* 使内边距包含在整体宽度内 */
+    box-sizing: border-box;
   }
+  
   
   .form-group input:focus {
     outline: none;  /* 去掉聚焦时的外框 */
@@ -43,12 +44,11 @@
   
   .form-group .input-icon {
     position: absolute;
-    left: 15px;  /* 图标位置 */
+    left: 15px; /* 图标的位置保持不变 */
     top: 50%;
     transform: translateY(-50%);
-    color: #aaa;  /* 图标颜色 */
+    color: #aaa;
   }
-  
   .remember-me {
     display: flex;
     align-items: center;

@@ -60,7 +60,7 @@ const LoginPage = () => {
       {error && <p className="error-message">{error}</p>}
       <form className="login-form" onSubmit={handleSubmit}>
         <div className="form-group">
-          <FontAwesomeIcon icon={faUser} className="input-icon" />
+          {/* <FontAwesomeIcon icon={faUser} className="input-icon" /> */}
           <input
             type="text"
             name="username"
@@ -71,7 +71,7 @@ const LoginPage = () => {
           />
         </div>
         <div className="form-group">
-          <FontAwesomeIcon icon={faLock} className="input-icon" />
+          {/* <FontAwesomeIcon icon={faLock} className="input-icon" /> */}
           <input
             type="password"
             name="password"
