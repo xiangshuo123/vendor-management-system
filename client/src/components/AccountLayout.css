@@ -1,0 +1,13 @@
+/* AccountLayout.css */
+.account-layout {
+    display: flex; /* 使用Flexbox布局 */
+    min-height: 100vh; /* 页面最小高度 */
+  }
+  
+  .account-content {
+    flex: 1; /* 使内容区占据剩余空间 */
+    margin-left: 240px; /* Sidebar的宽度 */
+    padding: 20px; /* 内边距 */
+    overflow: auto; /* 如果内容过多，启用滚动 */
+  }
+  

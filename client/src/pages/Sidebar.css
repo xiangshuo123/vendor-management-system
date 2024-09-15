@@ -1,34 +1,67 @@
+/* Sidebar.css */
 .sidebar {
   width: 220px;
-  height: calc(100vh - 60px); /* 减去 Header 的高度 */
-  background-color: #f8f8f8;
+  height: 100vh; /* 让Sidebar高度为整个视口高度 */
+  background-color: #ffffff;
   padding: 20px;
   position: fixed; /* 固定定位 */
-  top: 60px; /* 放在 Header 下面 */
-  left: 0;
+  top: 0; /* 从顶部开始 */
+  left: 0; /* 固定在左边 */
   display: flex;
   flex-direction: column;
-  justify-content: center; /* 垂直居中 */
+  justify-content: flex-start; /* 内容从顶部开始 */
+  align-items: center; /* 内容水平居中 */
   overflow-y: auto; /* 如果内容过多，允许滚动 */
-  z-index: 900; /* 确保 Sidebar 位于内容之上 */
+  z-index: 900; /* 确保Sidebar位于内容之上 */
   box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1); /* 右侧阴影效果 */
+  border-right: 1px solid #ddd; /* 右边框 */
 }
 
-.sidebar-title {
+/* 美化Sidebar内部内容 */
+.sidebar h3 {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 20px;
-  text-align: center; /* 标题居中 */
-}
-
-.sidebar-item {
-  margin-bottom: 15px;
-  font-size: 16px;
-  color: #6b6b6b;
-  cursor: pointer;
-  text-align: center; /* 文字居中 */
-}
-
-.sidebar-item:hover {
   color: #333;
+  text-align: center; /* 标题居中 */
+  border-bottom: 2px solid #f0f0f0; /* 添加底部边框 */
+  padding-bottom: 10px; /* 标题与内容之间的间距 */
+  width: 100%;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.sidebar li {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.sidebar a {
+  text-decoration: none;
+  color: #6b6b6b;
+  font-size: 16px;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center; /* 图标和文字垂直居中 */
+  justify-content: flex-start; /* 图标和文字左对齐 */
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.sidebar a:hover {
+  background-color: #f0f0f0; /* 悬停背景色 */
+  color: #333; /* 悬停文字色 */
+}
+
+.sidebar a.active {
+  background-color: #007bff; /* 激活状态背景色 */
+  color: #ffffff; /* 激活状态文字色 */
+}
+
+.sidebar i {
+  margin-right: 10px; /* 图标与文字之间的间距 */
 }

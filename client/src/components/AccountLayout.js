@@ -2,7 +2,8 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../pages/Sidebar';
-import './Sidebar.css';
+import '../pages/Sidebar.css';
+import './AccountLayout.css';
 
 const AccountLayout = () => {
   return (
