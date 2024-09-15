@@ -1,6 +1,4 @@
 const db = require('../db'); // 引入数据库连接
-const express = require('express');
-const router = express.Router();
 
 // 保存供应商信息的函数
 const saveSupplierInfo = async (req, res) => {
@@ -26,6 +24,9 @@ const saveSupplierInfo = async (req, res) => {
   } = req.body;
 
   try {
+    // 从认证中间件中获取用户 ID
+    const userId = req.user.id;
+
     // 将可能为 undefined 的值替换为 null
     const paramValues = [
       company_name || null,
@@ -45,19 +46,43 @@ const saveSupplierInfo = async (req, res) => {
       bank_account_number || null,
       production_capacity || null,
       advantage || null,
+      userId,
     ];
 
-    // 插入供应商信息到 suppliers 表
-    const [result] = await db
+    // 检查是否已有该用户的供应商信息
+    const [existingSupplier] = await db
       .promise()
-      .query(
-        'INSERT INTO suppliers (company_name, business_nature, contact_name, contact_phone, mobile_phone, country, state, city, district, landline, fax, email, bank_account_name, bank_name, bank_account_number, production_capacity, advantage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        paramValues
-      );
+      .query('SELECT id FROM suppliers WHERE user_id = ?', [userId]);
 
-    const supplierId = result.insertId; // 获取新插入的供应商ID
+    let supplierId;
 
-    // 插入联系人信息到 contacts 表
+    if (existingSupplier.length > 0) {
+      // 已有供应商信息，执行更新
+      supplierId = existingSupplier[0].id;
+      await db
+        .promise()
+        .query(
+          'UPDATE suppliers SET company_name = ?, business_nature = ?, contact_name = ?, contact_phone = ?, mobile_phone = ?, country = ?, state = ?, city = ?, district = ?, landline = ?, fax = ?, email = ?, bank_account_name = ?, bank_name = ?, bank_account_number = ?, production_capacity = ?, advantage = ? WHERE user_id = ?',
+          paramValues
+        );
+
+      // 删除旧的联系人信息
+      await db
+        .promise()
+        .query('DELETE FROM contacts WHERE supplier_id = ?', [supplierId]);
+    } else {
+      // 没有供应商信息，执行插入
+      const [result] = await db
+        .promise()
+        .query(
+          'INSERT INTO suppliers (company_name, business_nature, contact_name, contact_phone, mobile_phone, country, state, city, district, landline, fax, email, bank_account_name, bank_name, bank_account_number, production_capacity, advantage, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          paramValues
+        );
+
+      supplierId = result.insertId; // 获取新插入的供应商ID
+    }
+
+    // 插入新的联系人信息
     if (contacts && contacts.length > 0) {
       for (const contact of contacts) {
         await db
@@ -81,24 +106,27 @@ const saveSupplierInfo = async (req, res) => {
   }
 };
 
-// 根据供应商ID获取供应商信息的函数
+// 获取当前用户的供应商信息的函数
 const getSupplierInfo = async (req, res) => {
-  const supplierId = req.params.id;
+  // 从认证中间件中获取用户 ID
+  const userId = req.user.id;
 
   try {
     const [suppliers] = await db
       .promise()
-      .query('SELECT * FROM suppliers WHERE id = ?', [supplierId]);
-
-    const [contacts] = await db
-      .promise()
-      .query('SELECT * FROM contacts WHERE supplier_id = ?', [supplierId]);
+      .query('SELECT * FROM suppliers WHERE user_id = ?', [userId]);
 
     if (suppliers.length === 0) {
-      return res.status(404).json({ message: 'Supplier not found.' });
+      // 没有找到供应商信息，返回空对象
+      return res.status(200).json(null);
     }
 
     const supplier = suppliers[0];
+
+    const [contacts] = await db
+      .promise()
+      .query('SELECT * FROM contacts WHERE supplier_id = ?', [supplier.id]);
+
     supplier.contacts = contacts;
 
     res.status(200).json(supplier);

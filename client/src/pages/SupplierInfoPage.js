@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import './SupplierInfoPage.css';
 
@@ -26,42 +26,40 @@ const SupplierInfoPage = () => {
   const [defaultContactIndex, setDefaultContactIndex] = useState(null);
   const [lastUpdated, setLastUpdated] = useState('');
 
-  // 硬编码的国家、省、市数据
-  const countries = [
-    { value: 'China', label: 'China' },
-    { value: 'USA', label: 'USA' },
-  ];
+  // 模拟获取认证令牌（在真实应用中，应从登录状态或上下文中获取）
+  const token = localStorage.getItem('token'); // 假设令牌存储在 localStorage 中
 
-  const states = {
-    China: [
-      { value: 'Guangdong', label: 'Guangdong' },
-      { value: 'Beijing', label: 'Beijing' },
-    ],
-    USA: [
-      { value: 'California', label: 'California' },
-      { value: 'NewYork', label: 'New York' },
-    ],
-  };
+  // 在组件加载时获取供应商信息
+  useEffect(() => {
+    const fetchSupplierInfo = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/suppliers/', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`, // 添加认证令牌
+          },
+        });
 
-  const cities = {
-    Guangdong: [
-      { value: 'Guangzhou', label: 'Guangzhou' },
-      { value: 'Shenzhen', label: 'Shenzhen' },
-    ],
-    Beijing: [
-      { value: 'Chaoyang', label: 'Chaoyang' },
-      { value: 'Haidian', label: 'Haidian' },
-    ],
-    California: [
-      { value: 'LosAngeles', label: 'Los Angeles' },
-      { value: 'SanFrancisco', label: 'San Francisco' },
-    ],
-    NewYork: [
-      { value: 'NewYorkCity', label: 'New York City' },
-      { value: 'Buffalo', label: 'Buffalo' },
-    ],
-  };
+        if (response.ok) {
+          const data = await response.json();
+          if (data) {
+            setSupplierInfo(data);
+            // 如果需要显示最后更新时间，可以从数据中获取
+            setLastUpdated(data.updated_at || 'N/A');
+          }
+        } else {
+          console.error('Failed to fetch supplier info');
+        }
+      } catch (error) {
+        console.error('Error fetching supplier info:', error);
+      }
+    };
 
+    fetchSupplierInfo();
+  }, [token]);
+
+  // 处理输入变化
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSupplierInfo((prevState) => ({ ...prevState, [name]: value }));
@@ -102,10 +100,12 @@ const SupplierInfoPage = () => {
     try {
       console.log('Supplier Info to save:', supplierInfo); // 打印发送的数据以调试
 
+      // 修改这里的请求地址为后端服务器的地址
       const response = await fetch('http://localhost:5000/api/suppliers/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // 添加认证令牌
         },
         body: JSON.stringify(supplierInfo),
       });
@@ -126,6 +126,42 @@ const SupplierInfoPage = () => {
       console.error('Error saving supplier info:', error); // 打印错误信息
       alert(`Error saving supplier info: ${error.message}`);
     }
+  };
+
+  // 硬编码的国家、省、市数据
+  const countries = [
+    { value: 'China', label: 'China' },
+    { value: 'USA', label: 'USA' },
+  ];
+
+  const states = {
+    China: [
+      { value: 'Guangdong', label: 'Guangdong' },
+      { value: 'Beijing', label: 'Beijing' },
+    ],
+    USA: [
+      { value: 'California', label: 'California' },
+      { value: 'NewYork', label: 'New York' },
+    ],
+  };
+
+  const cities = {
+    Guangdong: [
+      { value: 'Guangzhou', label: 'Guangzhou' },
+      { value: 'Shenzhen', label: 'Shenzhen' },
+    ],
+    Beijing: [
+      { value: 'Chaoyang', label: 'Chaoyang' },
+      { value: 'Haidian', label: 'Haidian' },
+    ],
+    California: [
+      { value: 'LosAngeles', label: 'Los Angeles' },
+      { value: 'SanFrancisco', label: 'San Francisco' },
+    ],
+    NewYork: [
+      { value: 'NewYorkCity', label: 'New York City' },
+      { value: 'Buffalo', label: 'Buffalo' },
+    ],
   };
 
   return (

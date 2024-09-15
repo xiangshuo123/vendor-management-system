@@ -5,10 +5,13 @@ const {
   getSupplierInfo,
 } = require('../controllers/supplierController');
 
-// 路由：保存供应商信息
-router.post('/', saveSupplierInfo);
+// 引入认证中间件
+const authenticateToken = require('../middleware/authMiddleware');
 
-// 路由：根据供应商ID获取供应商信息
-router.get('/:id', getSupplierInfo);
+// 路由：获取当前用户的供应商信息
+router.get('/', authenticateToken, getSupplierInfo);
+
+// 路由：保存供应商信息
+router.post('/', authenticateToken, saveSupplierInfo);
 
 module.exports = router;
