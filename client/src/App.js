@@ -12,7 +12,7 @@ import Footer from './components/footer';
 import { AuthProvider } from '../src/components/AuthContext';
 import AccountLayout from './components/AccountLayout';
 import PermissionPage from './pages/PermissionPage';
-import QualificationsPage from './pages/QualificationsPage';
+import QualificationsPage from './pages/QualificationPage';
 import SupplierInfoPage from './pages/SupplierInfoPage';
 
 const App = () => {
