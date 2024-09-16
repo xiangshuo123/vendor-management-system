@@ -1,12 +1,13 @@
-.register-container {
-  max-width: 500px;
-  margin: 100px auto 0; /* 增加顶部的 margin */
+/* 更新 .profile-container 样式，确保其使用 Flexbox 居中 */
+.profile-container {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: flex-start; /* 垂直上对齐 */
+  margin: 50px 0; /* 增加顶部和底部的 margin */
   padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #f5f5f5; /* 背景颜色 */
+  height: calc(100vh - 100px); /* 动态高度 */
 }
-
 
 .profile-content {
   width: 100%;
@@ -15,8 +16,11 @@
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-left: auto; /* 保持右侧对齐 */
+  margin-right: auto; /* 保持右侧对齐 */
 }
 
+/* 其他样式保持不变 */
 .profile-title {
   text-align: center;
   font-size: 24px;
@@ -64,13 +68,14 @@
   .profile-content {
     width: 90%; /* 当屏幕宽度小于768px时，表单宽度为90% */
   }
-  
+
   .profile-row {
     flex-direction: column; /* 列方向排列 */
     align-items: flex-start;
   }
 
-  .profile-value, .profile-edit-button {
+  .profile-value,
+  .profile-edit-button {
     width: 100%;
     text-align: left; /* 左对齐 */
     margin-top: 5px;
