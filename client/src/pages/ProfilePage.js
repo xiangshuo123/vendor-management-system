@@ -128,9 +128,6 @@ const ProfilePage = () => {
         <div className="profile-row">
           <span className="profile-label">权限等级</span>
           <span className="profile-value">{userInfo.role}</span>
-          <button className="profile-edit-button" onClick={() => handleUpdate('role')}>
-            查看权限
-          </button>
         </div>
       </div>
     </div>
