@@ -1,12 +1,11 @@
-/* 更新 .profile-container 样式，确保其使用 Flexbox 居中 */
+/* ProfilePage.css */
+
 .profile-container {
   display: flex;
-  justify-content: center; /* 水平居中 */
-  align-items: flex-start; /* 垂直上对齐 */
-  margin: 50px 0; /* 增加顶部和底部的 margin */
+  justify-content: center; /* 让内容在水平居中 */
+  align-items: flex-start; /* 在垂直方向上对齐到顶部 */
   padding: 20px;
-  background-color: #f5f5f5; /* 背景颜色 */
-  height: calc(100vh - 100px); /* 动态高度 */
+  margin-top: 40px; /* 增加上方的margin */
 }
 
 .profile-content {
@@ -16,11 +15,8 @@
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin-left: auto; /* 保持右侧对齐 */
-  margin-right: auto; /* 保持右侧对齐 */
 }
 
-/* 其他样式保持不变 */
 .profile-title {
   text-align: center;
   font-size: 24px;
@@ -80,4 +76,42 @@
     text-align: left; /* 左对齐 */
     margin-top: 5px;
   }
+}
+
+/* 子账户部分样式 */
+.subaccounts-section {
+  margin-top: 40px;
+}
+
+.subaccounts-section h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.subaccounts-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.subaccounts-table th,
+.subaccounts-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.create-subaccount-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.create-subaccount-form input {
+  margin-bottom: 10px;
+  padding: 8px;
+  font-size: 16px;
+}
+
+.create-subaccount-form button {
+  align-self: flex-start;
 }
