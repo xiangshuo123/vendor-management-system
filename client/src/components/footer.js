@@ -1,32 +1,45 @@
+// Footer.js
+
 import React from 'react';
-import './Footer.css';  // 引入 Footer 的 CSS 样式
+import './Footer.css';
 
 const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-content">
-        <p>服务科技与工业发展 造福人类</p>
+        <div className="footer-top">
+          <p className="slogan">服务科技与工业发展 造福人类</p>
+        </div>
         <div className="footer-sections">
-          <div>
-            <p>XXX集团</p>
-            <p>公司简介</p>
-            <p>企业承诺</p>
-            <p>合作品牌</p>
-            <p>招贤纳士</p>
+          <div className="footer-column">
+            <h4>XXX集团</h4>
+            <ul>
+              <li>公司简介</li>
+              <li>企业承诺</li>
+              <li>合作品牌</li>
+              <li>招贤纳士</li>
+            </ul>
           </div>
-          <div>
-            <p>浏览</p>
-            <p>资讯中心</p>
-            <p>安全说明书(SDS)</p>
-            <p>产品</p>
+          <div className="footer-column">
+            <h4>浏览</h4>
+            <ul>
+              <li>资讯中心</li>
+              <li>安全说明书(SDS)</li>
+              <li>产品</li>
+            </ul>
           </div>
-          <div>
-            <p>联系我们</p>
-            <p>XXX资源中心</p>
-            <p>邮箱：abcd123@xxx.com</p>
-            <p>电话：010-12345678</p>
-            <p>传真：010-87654321</p>
+          <div className="footer-column">
+            <h4>联系我们</h4>
+            <ul>
+              <li>XXX资源中心</li>
+              <li>邮箱：abcd123@xxx.com</li>
+              <li>电话：010-12345678</li>
+              <li>传真：010-87654321</li>
+            </ul>
           </div>
+        </div>
+        <div className="footer-bottom">
+          <p>© 2023 XXX集团. 版权所有.</p>
         </div>
       </div>
     </footer>
