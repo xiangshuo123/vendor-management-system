@@ -1,0 +1,150 @@
+/* PermissionPage.css */
+
+.permission-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .title {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .permissions-section {
+    margin-bottom: 50px;
+  }
+  
+  .permission-category {
+    margin-bottom: 30px;
+  }
+  
+  .permission-category h2 {
+    font-size: 20px;
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+  }
+  
+  .permission-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    justify-content: space-between; /* 将权限选项移动到最右边 */
+  }
+  
+  .item-name {
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .permission-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end; /* 确保权限选项在右侧对齐 */
+  }
+  
+  .permission-options label {
+    margin-left: 15px; /* 调整间距 */
+    font-weight: normal;
+    color: #555;
+  }
+  
+  .permission-options input[type='checkbox'] {
+    margin-right: 5px;
+  }
+  
+  .subaccount-section {
+    margin-top: 50px;
+  }
+  
+  .subaccount-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .subaccount-header div {
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .subaccount-header label {
+    font-weight: normal;
+    color: #555;
+  }
+  
+  .subaccount-header input[type='checkbox'] {
+    margin-right: 5px;
+  }
+  
+  .preset-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .preset-button:hover {
+    background-color: #218838;
+  }
+  
+  .subaccount-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .subaccount-table th,
+  .subaccount-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+  }
+  
+  .subaccount-table th {
+    background-color: #f8f9fa;
+    color: #333;
+  }
+  
+  .subaccount-table td select {
+    padding: 4px;
+    font-size: 14px;
+  }
+  
+  @media (max-width: 768px) {
+    .permission-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .permission-options {
+      justify-content: flex-start; /* 移动到左侧以适应小屏幕 */
+      margin-top: 5px;
+    }
+  
+    .permission-options label {
+      margin-left: 0;
+      margin-right: 15px;
+    }
+  
+    .subaccount-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .subaccount-header div {
+      margin-bottom: 10px;
+    }
+  
+    .preset-button {
+      width: 100%;
+      text-align: center;
+    }
+  }
+  

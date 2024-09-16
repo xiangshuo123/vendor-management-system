@@ -1,6 +1,6 @@
 .dashboard-container {
     max-width: 1200px;
-    margin: 40px auto;
+    margin: 300px auto;
     text-align: center;
     background: url('../../public/images/img-9531.webp') no-repeat center center; /* 背景图片 */
     background-size: cover;  /* 背景图像的大小 */
