@@ -1,10 +1,12 @@
-.profile-container {
-  display: flex;
-  justify-content: center; /* 让内容在水平居中 */
-  align-items: flex-start; /* 在垂直方向上对齐到顶部 */
+.register-container {
+  max-width: 500px;
+  margin: 100px auto 0; /* 增加顶部的 margin */
   padding: 20px;
-  margin-top: 40px; /* 增加上方的margin */
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 
 .profile-content {
   width: 100%;

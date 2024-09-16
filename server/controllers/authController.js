@@ -3,46 +3,41 @@ const jwt = require('jsonwebtoken');
 const db = require('../db');  // 引入数据库连接
 const nodemailer = require('nodemailer');
 
-// 注册用户
+// 用户注册逻辑
 const registerUser = async (req, res) => {
-  const { username, email, password, phone, role, company_name, account_holder } = req.body;
+  const { username, email, password, phone, role, companyName, accountHolder } = req.body;
 
   try {
     // 检查用户是否已存在
-    const [userCheck] = await db.promise().query('SELECT * FROM users WHERE username = ? OR email = ?', [username, email]);
-    if (userCheck.length > 0) {
-      return res.status(400).json({ message: 'Username or email already exists' });
+    const [existingUser] = await db.promise().query('SELECT * FROM users WHERE email = ?', [email]);
+    if (existingUser.length > 0) {
+      return res.status(400).json({ message: '用户已存在' });
     }
 
-    // 检查公司是否已存在
-    const [companyCheck] = await db.promise().query('SELECT * FROM companies WHERE company_name = ?', [company_name]);
-    let companyId;
+    // 插入公司信息
+    const [companyResult] = await db.promise().query(
+      'INSERT INTO companies (company_name, account_holder) VALUES (?, ?)',
+      [companyName, accountHolder]
+    );
 
-    if (companyCheck.length > 0) {
-      companyId = companyCheck[0].id; // 使用已存在的公司ID
-    } else {
-      // 插入公司信息
-      const [companyResult] = await db.promise().query(
-        'INSERT INTO companies (company_name, account_holder) VALUES (?, ?)',
-        [company_name, account_holder]
-      );
-      companyId = companyResult.insertId; // 获取新插入的公司ID
-    }
+    const companyId = companyResult.insertId;
 
+    // 加密密码
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 插入用户信息
     await db.promise().query(
-      'INSERT INTO users (username, email, password, phone, role, company_id) VALUES (?, ?, ?, ?, ?, ?)',
-      [username, email, hashedPassword, phone, role, companyId]
+      'INSERT INTO users (username, email, password, phone, role, company_id, is_main_account) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [username, email, hashedPassword, phone, role, companyId, true]
     );
 
-    res.status(201).json({ message: 'User and company registered successfully!' });
+    res.status(201).json({ message: '注册成功！' });
   } catch (err) {
     console.error('Error in user registration:', err);
     res.status(500).json({ message: 'Server error during registration. Please try again later.' });
   }
 };
+
 
 // 用户登录逻辑
 const loginUser = async (req, res) => {
