@@ -1,6 +1,6 @@
 .register-container {
   max-width: 500px;
-  margin: 0 auto;
+  margin: 100px auto;  /* 增加顶部的 margin 以防止被 header 遮挡 */
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
