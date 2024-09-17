@@ -62,9 +62,9 @@ const Header = () => {
           </div>
           {showDropdown && (
             <div className="dropdown">
-              <p>您好！</p>
-              <p>{username}</p>
-              <button onClick={handleProfile}>管理账号信息</button>
+              <p className="dropdown-welcome">您好！</p>
+              <p className="dropdown-username">{username}</p>
+              <button onClick={handleProfile} className="dropdown-button">管理账号信息</button>
               <div className="account-switch" onClick={handleSwitchAccountToggle}>
                 切换账号 {storedAccounts.length > 1 ? `(${storedAccounts.length})` : ''}
               </div>
@@ -73,12 +73,12 @@ const Header = () => {
                   {storedAccounts.map((account) => (
                     <div key={account.username} className="account-item">
                       <span>{account.username}</span>
-                      <button onClick={() => handleSwitchAccount(account)}>登录</button>
+                      <button onClick={() => handleSwitchAccount(account)} className="switch-button">切换</button>
                     </div>
                   ))}
                 </div>
               )}
-              <button onClick={handleLogout}>登出</button>
+              <button onClick={handleLogout} className="dropdown-button">登出</button>
             </div>
           )}
         </div>
