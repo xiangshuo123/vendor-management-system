@@ -14,12 +14,12 @@ const Header = () => {
     setStoredAccounts(getStoredAccounts()); // 获取已存储的账户信息
   }, [isLoggedIn]);
 
-  // Handle navigation for logo click
+
   const handleLogoClick = () => {
     if (isLoggedIn) {
-      navigate('/dashboard'); // Navigate to dashboard if logged in
+      navigate('/dashboard');
     } else {
-      navigate('/login'); // Navigate to login if not logged in
+      navigate('/login');
     }
   };
 
@@ -32,20 +32,20 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    logout(); // Call logout function to clear user state
-    setShowDropdown(false); // Close dropdown
-    navigate('/login'); // Ensure navigating to login page after logout
+    logout();
+    setShowDropdown(false);
+    navigate('/login');
   };
 
   const handleSwitchAccountToggle = () => {
-    setShowSwitchAccount(!showSwitchAccount); // Toggle account switch view
+    setShowSwitchAccount(!showSwitchAccount);
   };
 
   const handleSwitchAccount = (account) => {
     login(account.username, account.token); // 使用保存的token重新登录
-    setShowDropdown(false); // Close the dropdown
-    setShowSwitchAccount(false); // Close the account switch
-    navigate('/dashboard'); // Redirect to dashboard after switching account
+    setShowDropdown(false); 
+    setShowSwitchAccount(false); 
+    navigate('/dashboard'); 
   };
 
   return (

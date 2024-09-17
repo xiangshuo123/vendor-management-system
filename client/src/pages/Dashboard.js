@@ -14,7 +14,6 @@ const Dashboard = () => {
         {/* 账户设置 */}
         <div className="dashboard-section" onClick={() => navigate('/profile')}>
           <div className="section-content">
-            {/* 移除了 SVG 图标 */}
             <h3 className="section-subtitle">账户设置</h3>
             <ul>
               <li
@@ -60,7 +59,6 @@ const Dashboard = () => {
         {/* 产品管理 */}
         <div className="dashboard-section" onClick={() => navigate('/product-list')}>
           <div className="section-content">
-            {/* 移除了 SVG 图标 */}
             <h3 className="section-subtitle">产品管理</h3>
             <ul>
               <li

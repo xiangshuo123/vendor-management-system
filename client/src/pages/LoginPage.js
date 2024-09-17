@@ -1,9 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // 使用 useNavigate 钩子进行页面导航
-import './LoginPage.css'; // 引入CSS文件
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // 引入 FontAwesome 图标库
-import { faUser, faLock } from '@fortawesome/free-solid-svg-icons'; // 引入用户和锁图标
+import { useNavigate } from 'react-router-dom';
+import './LoginPage.css';
 import { AuthContext } from '../components/AuthContext';
 
 const LoginPage = () => {
