@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';  // 引入 useParams 钩子
 import './ResetPasswordPage.css';  // 引入CSS文件
 
 const ResetPasswordPage = () => {
+  const { token } = useParams();  // 从URL参数中获取token
   const [formData, setFormData] = useState({
     newPassword: '',
     confirmPassword: '',
@@ -28,7 +30,8 @@ const ResetPasswordPage = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/reset-password', {
+      // 使用带有token的正确API路径
+      const response = await axios.post(`http://localhost:5000/api/auth/reset-password/${token}`, {
         newPassword: formData.newPassword,
       });
       setMessage(response.data.message);
