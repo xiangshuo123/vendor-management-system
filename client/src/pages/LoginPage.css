@@ -1,122 +1,121 @@
 .login-container {
-    max-width: 360px;  /* 调整最大宽度以使表单看起来更紧凑 */
-    margin: 80px auto;  /* 增加顶部外边距，使表单更居中 */
-    padding: 40px 30px;  /* 增加内边距 */
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;  /* 使标题和说明文字居中 */
-  }
-  
-  .login-container h2 {
-    font-size: 24px;  /* 调整标题字体大小 */
-    margin-bottom: 10px;
-    color: #333;
-    font-weight: bold;  /* 加粗标题 */
-  }
-  
-  .login-container p {
-    font-size: 14px;  /* 增加辅助说明文字 */
-    margin-bottom: 20px;
-    color: #666;
-  }
-  
-  .form-group {
-    margin-bottom: 20px;
-    position: relative;  /* 为图标定位 */
-  }
-  
-  .form-group input {
-    width: 100%;
-    padding: 12px 40px 12px 50px; /* 将左内边距调整为 50px */
-    border: 1px solid #ddd;
-    border-radius: 20px;
-    font-size: 16px;
-    box-sizing: border-box;
-  }
-  
-  
-  .form-group input:focus {
-    outline: none;  /* 去掉聚焦时的外框 */
-    border-color: #007BFF;  /* 聚焦时边框颜色 */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);  /* 聚焦时增加阴影效果 */
-  }
-  
-  .form-group .input-icon {
-    position: absolute;
-    left: 15px; /* 图标的位置保持不变 */
-    top: 50%;
-    transform: translateY(-50%);
-    color: #aaa;
-  }
-  .remember-me {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;  /* 使复选框和链接分布在两端 */
-    margin-bottom: 20px;
-  }
-  
-  .remember-me input {
-    margin-right: 5px;
-  }
-  
-  .login-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #007BFF;  /* 调整按钮颜色 */
-    color: white;
-    border: none;
-    border-radius: 20px;  /* 圆角按钮 */
-    font-size: 18px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s;  /* 增加过渡效果 */
-  }
-  
-  .login-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
-  .login-button:hover {
-    background-color: #0056b3;  /* 悬停时按钮颜色 */
-  }
-  
-  .register-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #6c757d;  /* 设置注册按钮颜色 */
-    color: white;
-    border: none;
-    border-radius: 20px;
-    font-size: 18px;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: background-color 0.3s;
-  }
-  
-  .register-button:hover {
-    background-color: #5a6268;  /* 悬停时按钮颜色 */
-  }
-  
-  .forgot-password-link {
-    background: none;
-    border: none;
-    color: #007BFF;  /* 调整链接颜色 */
-    cursor: pointer;
-    font-size: 14px;
-    text-decoration: none;  /* 去掉下划线 */
-    padding: 0;
-    margin: 5px 0;
-  }
-  
-  .forgot-password-link:hover {
-    color: #0056b3;  /* 悬停时链接颜色 */
-  }
-  
-  .error-message {
-    color: red;
-    text-align: center;
-    margin-bottom: 15px;
-  }
-  
+  max-width: 360px; /* 调整最大宽度以使表单看起来更紧凑 */
+  margin: 80px auto; /* 增加顶部外边距，使表单更居中 */
+  padding: 40px 30px; /* 增加内边距 */
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center; /* 使标题和说明文字居中 */
+}
+
+.login-container h2 {
+  font-size: 24px; /* 调整标题字体大小 */
+  margin-bottom: 10px;
+  color: #333;
+  font-weight: bold; /* 加粗标题 */
+}
+
+.login-container p {
+  font-size: 14px; /* 增加辅助说明文字 */
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  position: relative; /* 为图标定位 */
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 40px 12px 50px; /* 将左内边距调整为 50px */
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none; /* 去掉聚焦时的外框 */
+  border-color: #007BFF; /* 聚焦时边框颜色 */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2); /* 聚焦时增加阴影效果 */
+}
+
+.form-group .input-icon {
+  position: absolute;
+  left: 15px; /* 图标的位置保持不变 */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 使复选框和链接分布在两端 */
+  margin-bottom: 20px;
+}
+
+.remember-me input {
+  margin-right: 5px;
+}
+
+.login-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007BFF; /* 调整按钮颜色 */
+  color: white;
+  border: none;
+  border-radius: 20px; /* 圆角按钮 */
+  font-size: 18px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s; /* 增加过渡效果 */
+}
+
+.login-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.login-button:hover {
+  background-color: #0056b3; /* 悬停时按钮颜色 */
+}
+
+.register-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #6c757d; /* 设置注册按钮颜色 */
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 18px;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.3s;
+}
+
+.register-button:hover {
+  background-color: #5a6268; /* 悬停时按钮颜色 */
+}
+
+.forgot-password-link {
+  background: none;
+  border: none;
+  color: #007BFF; /* 调整链接颜色 */
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none; /* 去掉下划线 */
+  padding: 0;
+  margin: 5px 0;
+}
+
+.forgot-password-link:hover {
+  color: #0056b3; /* 悬停时链接颜色 */
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  margin-bottom: 15px;
+}

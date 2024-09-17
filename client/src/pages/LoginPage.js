@@ -1,21 +1,33 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';  // 使用 useNavigate 钩子进行页面导航
-import './LoginPage.css';  // 引入CSS文件
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';  // 引入 FontAwesome 图标库
-import { faUser, faLock } from '@fortawesome/free-solid-svg-icons';  // 引入用户和锁图标
-import { AuthContext } from '../components/AuthContext'; 
+import { useNavigate } from 'react-router-dom'; // 使用 useNavigate 钩子进行页面导航
+import './LoginPage.css'; // 引入CSS文件
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // 引入 FontAwesome 图标库
+import { faUser, faLock } from '@fortawesome/free-solid-svg-icons'; // 引入用户和锁图标
+import { AuthContext } from '../components/AuthContext';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
-    rememberMe: false, 
+    rememberMe: false,
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();  // 使用 useNavigate 钩子
+  const navigate = useNavigate(); // 使用 useNavigate 钩子
   const { login } = useContext(AuthContext);
+
+  useEffect(() => {
+    // 从 localStorage 中获取用户名
+    const savedUsername = localStorage.getItem('rememberMe');
+    if (savedUsername) {
+      setFormData((prevData) => ({
+        ...prevData,
+        username: savedUsername,
+        rememberMe: true, // 如果有保存的用户名，则记住账号选项也设置为选中
+      }));
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -37,10 +49,10 @@ const LoginPage = () => {
       });
 
       if (response.data.token) {
-        login(formData.username);  // 调用 login 函数更新全局状态
+        login(formData.username); // 调用 login 函数更新全局状态
         localStorage.setItem('token', response.data.token); // 存储 JWT 令牌
         if (formData.rememberMe) {
-          localStorage.setItem('rememberMe', formData.username);
+          localStorage.setItem('rememberMe', formData.username); // 存储用户名
         } else {
           localStorage.removeItem('rememberMe');
         }
@@ -60,7 +72,6 @@ const LoginPage = () => {
       {error && <p className="error-message">{error}</p>}
       <form className="login-form" onSubmit={handleSubmit}>
         <div className="form-group">
-          {/* <FontAwesomeIcon icon={faUser} className="input-icon" /> */}
           <input
             type="text"
             name="username"
@@ -71,7 +82,6 @@ const LoginPage = () => {
           />
         </div>
         <div className="form-group">
-          {/* <FontAwesomeIcon icon={faLock} className="input-icon" /> */}
           <input
             type="password"
             name="password"
@@ -89,7 +99,7 @@ const LoginPage = () => {
               checked={formData.rememberMe}
               onChange={handleChange}
             />
-            记住密码
+            记住账号
           </label>
           <button type="button" className="forgot-password-link" onClick={() => navigate('/forgot-password')}>
             忘记密码?
