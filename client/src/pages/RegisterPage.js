@@ -53,101 +53,111 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="register-container">
-      <h2>注册账号</h2>
-      {error && <p className="error-message">{error}</p>}
-      {success && <p className="success-message">{success}</p>}
-      <form className="register-form" onSubmit={handleSubmit}>
-        {/* 个人信息部分 */}
-        <h3>个人信息</h3>
-        <div className="form-group">
-          <label>用户名</label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>邮箱</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>密码</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>确认密码</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>手机号</label>
-          <input
-            type="text"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label>权限等级</label>
-          <select
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-          >
-            <option value="admin">管理员</option>
-            <option value="sales">销售员</option>
-          </select>
-        </div>
+    <div className="register-page">
+      {/* 表单部分 */}
+      <div className="register-container">
+        <h2>注册账号</h2>
+        {error && <p className="error-message">{error}</p>}
+        {success && <p className="success-message">{success}</p>}
+        <form className="register-form" onSubmit={handleSubmit}>
+          {/* 个人信息部分 */}
+          <h3>个人信息</h3>
+          <div className="form-group">
+            <label>用户名</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>邮箱</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>密码</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>确认密码</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>手机号</label>
+            <input
+              type="text"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="form-group">
+            <label>权限等级</label>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+            >
+              <option value="admin">管理员</option>
+              <option value="sales">销售员</option>
+            </select>
+          </div>
 
-        {/* 公司信息部分 */}
-        <h3>公司信息</h3>
-        <div className="form-group">
-          <label>公司名称</label>
-          <input
-            type="text"
-            name="companyName"
-            value={formData.companyName}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>账户持有人</label>
-          <input
-            type="text"
-            name="accountHolder"
-            value={formData.accountHolder}
-            onChange={handleChange}
-            required
-          />
-        </div>
+          {/* 公司信息部分 */}
+          <h3>公司信息</h3>
+          <div className="form-group">
+            <label>公司名称</label>
+            <input
+              type="text"
+              name="companyName"
+              value={formData.companyName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>账户持有人</label>
+            <input
+              type="text"
+              name="accountHolder"
+              value={formData.accountHolder}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <button type="submit" className="register-button" disabled={loading}>
-          {loading ? '注册中...' : '注册'}
-        </button>
-      </form>
+          <button type="submit" className="register-button" disabled={loading}>
+            {loading ? '注册中...' : '注册'}
+          </button>
+        </form>
+      </div>
+
+      {/* 图片部分 */}
+      <img
+        src='/images/registerImage.jpg'
+        alt="注册提示"
+        className="register-image"
+      />
     </div>
   );
 };
