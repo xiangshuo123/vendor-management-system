@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';  // 引入 useParams 钩子
+import { useParams, useNavigate } from 'react-router-dom';  // 引入 useParams 钩子
 import './ResetPasswordPage.css';  // 引入CSS文件
 
 const ResetPasswordPage = () => {
@@ -12,6 +12,7 @@ const ResetPasswordPage = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,12 +36,16 @@ const ResetPasswordPage = () => {
         newPassword: formData.newPassword,
       });
       setMessage(response.data.message);
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to reset password. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    // 成功后1.5秒自动跳转到登录页面
+    setTimeout(() => {
+      navigate('/login');
+    }, 1500); 
+  } catch (err) {
+    setError(err.response?.data?.message || 'Failed to reset password. Please try again.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="reset-password-container">
