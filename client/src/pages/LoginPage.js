@@ -105,10 +105,10 @@ const LoginPage = () => {
             忘记密码?
           </button>
         </div>
-        <button type="submit" className="login-button" disabled={loading}>
+        <button type="submit" className="primary-button" disabled={loading}>
           {loading ? '登录中...' : '登录'}
         </button>
-        <button type="button" className="register-button" onClick={() => navigate('/register')}>
+        <button type="button" className="primary-button" onClick={() => navigate('/register')}>
           注册
         </button>
       </form>
