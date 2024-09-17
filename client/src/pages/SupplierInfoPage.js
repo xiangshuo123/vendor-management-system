@@ -25,6 +25,7 @@ const SupplierInfoPage = () => {
   });
   const [defaultContactIndex, setDefaultContactIndex] = useState(null);
   const [lastUpdated, setLastUpdated] = useState('');
+  const [errors, setErrors] = useState({});
 
   // 模拟获取认证令牌（在真实应用中，应从登录状态或上下文中获取）
   const token = localStorage.getItem('token'); // 假设令牌存储在 localStorage 中
@@ -58,6 +59,25 @@ const SupplierInfoPage = () => {
 
     fetchSupplierInfo();
   }, [token]);
+
+  // 输入验证函数
+  const validateFields = () => {
+    let newErrors = {};
+    if (!supplierInfo.mobile_phone) newErrors.mobile_phone = '手机为必填项';
+    if (!supplierInfo.country) newErrors.country = '国家为必填项';
+    if (!supplierInfo.state) newErrors.state = '省为必填项';
+    if (!supplierInfo.city) newErrors.city = '市为必填项';
+    if (!supplierInfo.landline) newErrors.landline = '座机号码为必填项';
+    if (!supplierInfo.fax) newErrors.fax = '传真号为必填项';
+    if (!supplierInfo.email) {
+      newErrors.email = '邮箱为必填项';
+    } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(supplierInfo.email)) {
+      newErrors.email = '请输入有效的邮箱地址';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // 处理输入变化
   const handleInputChange = (e) => {
@@ -97,10 +117,13 @@ const SupplierInfoPage = () => {
   };
 
   const handleSave = async () => {
+    if (!validateFields()) {
+      alert('请填写所有必填项，并确保输入有效的信息！');
+      return;
+    }
     try {
       console.log('Supplier Info to save:', supplierInfo); // 打印发送的数据以调试
 
-      // 修改这里的请求地址为后端服务器的地址
       const response = await fetch('http://localhost:5000/api/suppliers/', {
         method: 'POST',
         headers: {
@@ -110,7 +133,6 @@ const SupplierInfoPage = () => {
         body: JSON.stringify(supplierInfo),
       });
 
-      // 检查响应的状态码和数据
       if (!response.ok) {
         const errorData = await response.json(); // 获取错误信息
         console.error('Error response from server:', errorData);
@@ -210,47 +232,48 @@ const SupplierInfoPage = () => {
           />
         </div>
         <div className="form-row">
-          <label>手机：</label>
+          <label>手机：<span className="required">*</span></label>
           <input
             type="text"
             name="mobile_phone"
             value={supplierInfo.mobile_phone}
             onChange={handleInputChange}
+            required
           />
+          {errors.mobile_phone && <span className="error-text">{errors.mobile_phone}</span>}
         </div>
         <div className="form-row">
-          <label>国家：</label>
+          <label>国家：<span className="required">*</span></label>
           <Select
             options={countries}
             onChange={handleCountryChange}
             placeholder="选择国家"
             value={countries.find((c) => c.value === supplierInfo.country)}
           />
+          {errors.country && <span className="error-text">{errors.country}</span>}
         </div>
         <div className="form-row">
-          <label>省：</label>
+          <label>省：<span className="required">*</span></label>
           <Select
             options={supplierInfo.country ? states[supplierInfo.country] : []}
             onChange={handleStateChange}
             placeholder="选择省"
-            value={states[supplierInfo.country]?.find(
-              (s) => s.value === supplierInfo.state
-            )}
+            value={states[supplierInfo.country]?.find((s) => s.value === supplierInfo.state)}
           />
+          {errors.state && <span className="error-text">{errors.state}</span>}
         </div>
         <div className="form-row">
-          <label>市：</label>
+          <label>市：<span className="required">*</span></label>
           <Select
             options={supplierInfo.state ? cities[supplierInfo.state] : []}
             onChange={handleCityChange}
             placeholder="选择市"
-            value={cities[supplierInfo.state]?.find(
-              (c) => c.value === supplierInfo.city
-            )}
+            value={cities[supplierInfo.state]?.find((c) => c.value === supplierInfo.city)}
           />
+          {errors.city && <span className="error-text">{errors.city}</span>}
         </div>
         <div className="form-row">
-          <label>座机号码：</label>
+          <label>座机号码：<span className="required">*</span></label>
           <input
             type="text"
             name="landline"
@@ -258,9 +281,10 @@ const SupplierInfoPage = () => {
             onChange={handleInputChange}
             required
           />
+          {errors.landline && <span className="error-text">{errors.landline}</span>}
         </div>
         <div className="form-row">
-          <label>传真号：</label>
+          <label>传真号：<span className="required">*</span></label>
           <input
             type="text"
             name="fax"
@@ -268,9 +292,10 @@ const SupplierInfoPage = () => {
             onChange={handleInputChange}
             required
           />
+          {errors.fax && <span className="error-text">{errors.fax}</span>}
         </div>
         <div className="form-row">
-          <label>邮箱：</label>
+          <label>邮箱：<span className="required">*</span></label>
           <input
             type="email"
             name="email"
@@ -278,6 +303,7 @@ const SupplierInfoPage = () => {
             onChange={handleInputChange}
             required
           />
+          {errors.email && <span className="error-text">{errors.email}</span>}
         </div>
       </div>
 
