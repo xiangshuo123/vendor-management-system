@@ -1,12 +1,18 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Header.css';
 import { AuthContext } from './AuthContext'; // Import AuthContext
 
 const Header = () => {
-  const { isLoggedIn, username, logout } = useContext(AuthContext); // Use AuthContext
-  const [showDropdown, setShowDropdown] = React.useState(false);
+  const { isLoggedIn, username, logout, login, getStoredAccounts } = useContext(AuthContext); // Use AuthContext
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showSwitchAccount, setShowSwitchAccount] = useState(false); // 切换账号下拉框的状态
+  const [storedAccounts, setStoredAccounts] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setStoredAccounts(getStoredAccounts()); // 获取已存储的账户信息
+  }, [isLoggedIn]);
 
   // Handle navigation for logo click
   const handleLogoClick = () => {
@@ -31,6 +37,17 @@ const Header = () => {
     navigate('/login'); // Ensure navigating to login page after logout
   };
 
+  const handleSwitchAccountToggle = () => {
+    setShowSwitchAccount(!showSwitchAccount); // Toggle account switch view
+  };
+
+  const handleSwitchAccount = (account) => {
+    login(account.username, account.token); // 使用保存的token重新登录
+    setShowDropdown(false); // Close the dropdown
+    setShowSwitchAccount(false); // Close the account switch
+    navigate('/dashboard'); // Redirect to dashboard after switching account
+  };
+
   return (
     <header className="header">
       <div className="header-left">
@@ -48,7 +65,19 @@ const Header = () => {
               <p>您好！</p>
               <p>{username}</p>
               <button onClick={handleProfile}>管理账号信息</button>
-              <div className="account-switch">切换账号</div> {/* Future feature */}
+              <div className="account-switch" onClick={handleSwitchAccountToggle}>
+                切换账号 {storedAccounts.length > 1 ? `(${storedAccounts.length})` : ''}
+              </div>
+              {showSwitchAccount && (
+                <div className="switch-account-list">
+                  {storedAccounts.map((account) => (
+                    <div key={account.username} className="account-item">
+                      <span>{account.username}</span>
+                      <button onClick={() => handleSwitchAccount(account)}>登录</button>
+                    </div>
+                  ))}
+                </div>
+              )}
               <button onClick={handleLogout}>登出</button>
             </div>
           )}
